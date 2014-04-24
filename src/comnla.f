@@ -125,8 +125,9 @@ c     EOF layers. Flagged with cp = -4
 c
       real del_h(nla),del_t(nla),del_d(nla)
       integer first_sublay(nla),last_sublay(nla)
+      integer eof_type(nla)
       logical eof_layer(nla)
-      common /eof_layers/ del_h,del_t,del_d,
+      common /eof_layers/ del_h,del_t,del_d,eof_type,
      &                    first_sublay,last_sublay,eof_layer
 c
 c Flow of fluid layers

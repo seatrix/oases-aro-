@@ -235,6 +235,7 @@ c >>>
        backspace(1)
        del_ptb = (dep_next-dep_ptb)/nsub 
        eof_layer(m) = .true.
+       eof_type(m) = 4
        first_sublay(m) = lcnt
        last_sublay(m) = lcnt+nsub-1 
        del_h(m) = dch

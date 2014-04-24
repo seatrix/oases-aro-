@@ -49,9 +49,9 @@ if (EXISTS "${ROOT}/src-rd" AND IS_DIRECTORY "${ROOT}/src-rd")
   add_subdirectory(src-rd)
 endif (EXISTS "${ROOT}/src-rd" AND IS_DIRECTORY "${ROOT}/src-rd")
 
-if (EXISTS "${ROOT}/src-mfp" AND IS_DIRECTORY "${ROOT}/src-mfp")
+if (EXISTS "src-mfp" AND IS_DIRECTORY "src-mfp")
   add_subdirectory(src-mfp)
-endif (EXISTS "${ROOT}/src-mfp" AND IS_DIRECTORY "${ROOT}/src-mfp")
+endif (EXISTS "src-mfp" AND IS_DIRECTORY "src-mfp")
 
 
 
