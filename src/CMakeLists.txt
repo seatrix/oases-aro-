@@ -1,7 +1,7 @@
 include_directories(./)
 
 #file(GLOB LIBOAS_SOURCES oas*.f) # can't use this because there are misc oas* files!
-set(LIBOAS_SOURCES oasaun32.f oasbun21.f oascun31.f oasdun21.f oaseun31.f oasfun22.f oasgun21.f oashun21.f oasiun23.f oasjun21.f oaskun21.f oasmun21_bin.f oasnun22.f)
+set(LIBOAS_SOURCES oasaun32.f oasbun21.f oascun31.f oasdun21.f oaseun32.f oasfun22.f oasgun21.f oashun21.f oasiun23.f oasjun21.f oaskun21.f oasmun21_bin.f oasnun22.f)
 
 
 # oas becomes liboas.a -- previously called oaslib.a

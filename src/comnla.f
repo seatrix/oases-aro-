@@ -121,6 +121,12 @@ c     &        ZETAL,AIRYL,BIRYL,
 c     &        AIRYDL,BIRYDL,ZTAML
 
 c
+c     EOF layers. Flagged with cp = -4
+c
+      real del_h(nla),del_t(nla),del_d(nla)
+      logical eof_layer(nla)
+      common /eof_layers/ del_h,del_t,del_d,eof_layer
+c
 c Flow of fluid layers
 c
       real flow_vel(nla),flow_fac(nla)
@@ -146,5 +152,4 @@ c
       logical disper(nla)
       common /dislpa/ cpdl,csdl,apdl,asdl,iddis,nactf,idltyp,
      &                idlmax,disper
-
 
