@@ -74,6 +74,8 @@ c >>> check for flow
        end if
 c
       disper(lcnt)=.false.
+      eof_layer(m)=.false.
+
       if (rough(lcnt).lt.-1e-10) then
 C     BACKSPACE AND READ ALSO CORRELLATION LENGTH
        BACKSPACE(1)
@@ -232,6 +234,12 @@ c >>>
        read(1,*) dep_next
        backspace(1)
        del_ptb = (dep_next-dep_ptb)/nsub 
+       eof_layer(m) = .true.
+       first_sublay(m) = lcnt
+       last_sublay(m) = lcnt+nsub-1 
+       del_h(m) = dch
+       del_t(m) = dct
+       del_d(m) = dcd
        do isub = lcnt, lcnt+nsub-1
          v(isub,1) = dep_ptb+(isub-lcnt)*del_ptb
          v(isub,2) = arctic_ptb(v(isub,1),0.0,0.0,0.0)
@@ -243,10 +251,6 @@ c >>>
          LAYTYP(isub)=2
          NUMT(2)=NUMT(2)+1
          LAYT(NUMT(2),2)=isub
-         eof_layer(isub) = .true.
-         del_h(isub) = dch
-         del_t(isub) = dct
-         del_d(isub) = dcd
        end do
        ladd = ladd + nsub - 1
 
