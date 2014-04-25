@@ -123,7 +123,7 @@ c     &        AIRYDL,BIRYDL,ZTAML
 c
 c     EOF layers. Flagged with cp = -4
 c
-      real del_h(nla),del_t(nla),del_d(nla)
+      real dep_h(nla),dep_t(nla),dep_d(nla)
       integer first_sublay(nla),last_sublay(nla)
       integer eof_type(nla)
       logical eof_layer(nla)

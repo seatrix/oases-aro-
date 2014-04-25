@@ -238,13 +238,13 @@ c >>>
        eof_type(m) = 4
        first_sublay(m) = lcnt
        last_sublay(m) = lcnt+nsub-1 
-       del_h(m) = dch
-       del_t(m) = dct
-       del_d(m) = dcd
+       dep_h(m) = dch
+       dep_t(m) = dct
+       dep_d(m) = dcd
        do isub = lcnt, lcnt+nsub-1
          v(isub,1) = dep_ptb+(isub-lcnt)*del_ptb
-         v(isub,2) = arctic_ptb(v(isub,1),0.0,0.0,0.0)
-         v(isub,3) =-arctic_ptb(v(isub,1)+del_ptb,0.0,0.0,0.0)
+         v(isub,2) = arctic_svp(v(isub,1),dch,dct,dcd)
+         v(isub,3) =-arctic_svp(v(isub,1)+del_ptb,dch,dct,dcd)
          v(isub,4) = 0
          v(isub,5) = 0
          v(isub,6) = 1.0
@@ -460,6 +460,21 @@ C
  112  CONTINUE
       RETURN
       END
+
+      subroutine eof_svp(lay_num,dh,dt,dd)
+       INCLUDE 'compar.f'
+       INCLUDE 'comnla.f'
+       do lcnt=first_sublay(lay_num),last_sublay(lay_num)
+          if (eof_type(lay_num) .eq. 4) then
+            v(lcnt,2) = arctic_svp(v(lcnt,1),dh,dt,dd)
+            v(lcnt,3) = -arctic_svp(v(lcnt+1,1),dh,dt,dd)
+          end if
+       end do
+       return
+       end
+            
+c           Arctic profile layer
+            
 c*****************************************************
 c****    Arctic Perturbation  ************************
 c*****************************************************
@@ -470,7 +485,7 @@ c****   surface: 1440 m/s, halocline: 1442 m/s, thermocline: 1460 m/s,
 c****   at 1000 m: 1478 m/s, bottom at 5000 m w/ .0167 /s gradient to it
 c****   Emperical fit from data: halocline sin**2, thermocline sin, rest linear
 c*****************************************************
-	real function arctic_ptb(z,dzh,dzt,dzd)
+	real function arctic_svp(z,dh,dt,dd)
 	parameter (zh = 50.,zt = 250.,zd = 1000.,zb = 5000.)
 	parameter (cs = 1440.,ch = 1442.,ct = 1462.,cd = 1480.,cb = 5000.) 
 	parameter (dch = 8., dct = 20., dcd = .024, dcb = .0167)
@@ -478,9 +493,9 @@ c*****************************************************
 	data c0/1440./
 c*****************************************************
 c***      layers
-	dh = zh + dzh
-	dt = zt + dzt
-	dd = zd + dzd
+c	dh = zh + dzh
+c	dt = zt + dzt
+c	dd = zd + dzd
 c***      thicknesses
 	xdh = dh
 	xdt = dt - dh
