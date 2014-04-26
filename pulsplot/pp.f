@@ -1105,7 +1105,7 @@ c        CALL GETINT(12,IDEPTH)
         CALL fltFLD(12,'Depth:',PDEPTH,'m')
         CALL FLTFLD(13,'Azimuth:',thetad,'deg')
         CALL FLTFLD(14,'Scale factor:',RSCFACT(1),' ')
-        CALL CHAFLD(15,'Range scaling?',LETTER,'Y/N')
+        CALL CHAFLD(15,'Range scaling?',LETTER,'S/C/N')
         CALL CHAFLD(16,'Parameter:',PLOTTYPE,DUMMY(1:2*NOUT-1))
         CALL ACTFLD(17,'Generate plot:',' ')
         CALL ACTFLD(18,'Trace file:',' ')
@@ -1117,7 +1117,9 @@ c        CALL GETINT(12,IDEPTH)
          GO TO 3000      
         ELSE IF (IRET.EQ.15) THEN
          CALL GETCHA(15,LETTER)
-         IF (LETTER.EQ.'Y') THEN
+         IF (LETTER.EQ.'S') THEN
+          ICDR=-1
+         else if (LETTER.EQ.'C') THEN
           ICDR=0
          ELSE
           ICDR=1
@@ -1186,8 +1188,10 @@ c        CALL GETINT(12,IDEPTH)
         RSCFACT(3)=SCALEFACT(3)
 
         CALL GETCHA(15,LETTER)
-        IF (LETTER.EQ.'Y') THEN
-          ICDR=0
+        IF (LETTER.EQ.'S') THEN
+           ICDR=-1
+        ELSE IF (LETTER.EQ.'C') THEN
+           ICDR=0
         ELSE
           ICDR=1
           LETTER='N'
@@ -1381,7 +1385,7 @@ c        CALL GETINT(8,IRANGE)
         CALL TXTFLD(17,'Undef. file:',UNDFIL)
         call txtfld(18,'Shade file:',shdver)
         CALL CHAFLD(19,'Parameter:',PLOTTYPE,DUMMY(1:2*NOUT-1))
-        CALL CHAFLD(20,'Range scaling?',LETTER,'Y/N')
+        CALL CHAFLD(20,'Range scaling?',LETTER,'S/C/N')
         CALL ACTFLD(21,'Generate plot:',' ')
         CALL ACTFLD(22,'return:','PP main menu')
 
@@ -1499,8 +1503,10 @@ c          go to 1024
  7756     CALL GETCHA(19,PLOTTYPE)
 
         CALL GETCHA(20,LETTER)
-        IF (LETTER.EQ.'Y') THEN
-          ICDR=0
+        IF (LETTER.EQ.'S') THEN
+           ICDR=-1
+        ELSE IF (LETTER.EQ.'C') THEN
+           ICDR=0
         ELSE
           ICDR=1
           LETTER='N'
@@ -1533,7 +1539,7 @@ c          go to 1024
         CALL TXTFLD(13,'Undef. file:',UNDFIL)
         call txtfld(14,'Shade file:',shdhor)
         CALL CHAFLD(15,'Parameter:',PLOTTYPE,DUMMY(1:2*NOUT-1))
-        CALL CHAFLD(16,'Range scaling?',LETTER,'Y/N')
+        CALL CHAFLD(16,'Range scaling?',LETTER,'S/C/N')
         CALL ACTFLD(17,'Generate plot:',' ')
         CALL ACTFLD(18,'return:','PP main menu')
 
@@ -1644,8 +1650,10 @@ c          pause
         CALL GETCHA(15,PLOTTYPE)
 
         CALL GETCHA(16,LETTER)
-        IF (LETTER.EQ.'Y') THEN
-          ICDR=0
+        IF (LETTER.EQ.'S') THEN
+           ICDR=-1
+        ELSE IF (LETTER.EQ.'C') THEN
+           ICDR=0
         ELSE
           ICDR=1
           LETTER='N'
@@ -2411,8 +2419,10 @@ c >>> reference range inverse
           ELSE
             TSHIFT=TMIN
           ENDIF
-          if (icdr.eq.0) then
+          if (icdr.eq.-1) then
            fref=range*onoran
+          else if (icdr.eq.0) then
+           fref=sqrt(range*onoran)
           else
            fref=1e0
           end if
@@ -2452,8 +2462,10 @@ c         write(21,*) 'scaling factor:',FCTOR
            OFFSET=RANGE
            IF (ICDR.GT.0.or.log_ts) THEN
             FACTOR=FCTOR
-           ELSE
+           ELSE if (icdr.lt.0) then
             FACTOR=RANGE*onoran*FCTOR
+           else
+            FACTOR=sqrt(RANGE*onoran)*FCTOR
            END IF
            CALL OUSTACK(LF0,LF,TMIN,DT,OFFSET,FACTOR,IPACT,PX,MODULO)
           ELSE if (TRACEFORM.EQ.'GLD') THEN
