@@ -22,7 +22,7 @@ Cms
       INCLUDE 'comnrd.f'
 
       integer ladd, lcnt
-
+      real arctic_tlc
 C           
 C ********************FORMATS*******************               
 C           
@@ -466,6 +466,7 @@ C
        INCLUDE 'compar.f'
        INCLUDE 'comnla.f'
        real dh,dt,dd
+       real arctic_svp
        do lcnt=first_sublay(lay_num),last_sublay(lay_num)
           if (eof_type(lay_num) .eq. 4) then
             v(lcnt,2) = arctic_svp(v(lcnt,1),dh,dt,dd)
