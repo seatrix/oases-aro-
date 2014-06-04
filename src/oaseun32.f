@@ -464,6 +464,7 @@ C
       subroutine eof_svp(lay_num,dh,dt,dd)
        INCLUDE 'compar.f'
        INCLUDE 'comnla.f'
+       real dh,dt,dd
        do lcnt=first_sublay(lay_num),last_sublay(lay_num)
           if (eof_type(lay_num) .eq. 4) then
             v(lcnt,2) = arctic_svp(v(lcnt,1),dh,dt,dd)
@@ -486,6 +487,7 @@ c****   at 1000 m: 1478 m/s, bottom at 5000 m w/ .0167 /s gradient to it
 c****   Emperical fit from data: halocline sin**2, thermocline sin, rest linear
 c*****************************************************
 	real function arctic_svp(z,dh,dt,dd)
+        real z,dh,dt,dd
 	parameter (zh = 50.,zt = 250.,zd = 1000.,zb = 5000.)
 	parameter (cs = 1440.,ch = 1442.,ct = 1462.,cd = 1480.,cb = 5000.) 
 	parameter (dch = 8., dct = 20., dcd = .024, dcb = .0167)
