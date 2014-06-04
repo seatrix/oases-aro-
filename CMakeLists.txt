@@ -41,13 +41,13 @@ endif (Fortran_COMPILER_NAME MATCHES "gfortran")
 add_subdirectory(bin)
 add_subdirectory(src)
 
-if (EXISTS "${ROOT}/src-3d" AND IS_DIRECTORY "${ROOT}/src-3d")
+#if (EXISTS "${ROOT}/src-3d" AND IS_DIRECTORY "${ROOT}/src-3d")
   add_subdirectory(src-3d)
-endif (EXISTS "${ROOT}/src-3d" AND IS_DIRECTORY "${ROOT}/src-3d")
+#endif (EXISTS "${ROOT}/src-3d" AND IS_DIRECTORY "${ROOT}/src-3d")
 
-if (EXISTS "${ROOT}/src-rd" AND IS_DIRECTORY "${ROOT}/src-rd")
+#if (EXISTS "${ROOT}/src-rd" AND IS_DIRECTORY "${ROOT}/src-rd")
   add_subdirectory(src-rd)
-endif (EXISTS "${ROOT}/src-rd" AND IS_DIRECTORY "${ROOT}/src-rd")
+#endif (EXISTS "${ROOT}/src-rd" AND IS_DIRECTORY "${ROOT}/src-rd")
 
 #if (EXISTS "src-mfp" AND IS_DIRECTORY "src-mfp")
   add_subdirectory(src-mfp)
