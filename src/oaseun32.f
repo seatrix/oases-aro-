@@ -252,6 +252,7 @@ c >>>
          LAYTYP(isub)=2
          NUMT(2)=NUMT(2)+1
          LAYT(NUMT(2),2)=isub
+         write(6,*) (v(isub,ii),ii=1,6)
        end do
        ladd = ladd + nsub - 1
 
