@@ -492,7 +492,8 @@ c*****************************************************
         real z,dh,dt,dd
 	parameter (zh = 50.,zt = 250.,zd = 1000.,zb = 5000.)
 	parameter (cs = 1440.,ch = 1442.,ct = 1462.,cd = 1480.,cb = 5000.) 
-	parameter (dch = 8., dct = 20., dcd = .024, dcb = .0167)
+c	parameter (dch = 8., dct = 20., dcd = .024, dcb = .0167)
+	parameter (dch = 8., dct = 20., dcb = .0167)
 	data pi/3.1415962/,pi2/1.5707963/,pi4/0.7853981/
 	data c0/1440./
 c*****************************************************
@@ -504,6 +505,7 @@ c***      thicknesses
 	xdh = dh
 	xdt = dt - dh
 	xdd = dd - dt
+        dcd = (cd-ct)/(dd-dt)
 c***      sound speeds
 	if (z .lt. 0.) then
            cz = 0
