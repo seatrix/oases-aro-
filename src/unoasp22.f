@@ -597,7 +597,7 @@ C *** FREQUENCY LOOP
       CSQ=DSQ*DSQ      
 
 c     Get dispersive layer parameters
-      call get_disper(jj)
+c      call get_disper(jj)
       
 C *** WAVENUMBER SAMPLING
       IF (AUSAMP) THEN
