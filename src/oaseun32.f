@@ -560,6 +560,7 @@ c
        write(6,*) 'Dispersive medium:',i
        read(3,*) nf
        do 10 j=1,nf
+
         read(3,*) (x(k,j),k=1,5)
  10     continue
        do 8 j=lx,mx
@@ -584,12 +585,31 @@ c
         v(i,3)=csdl(ity,lx)
         v(i,4)=apdl(ity,lx)
         v(i,5)=asdl(ity,lx)
+        write(6,*) i,(lx-1)*dlfr,v(i,2),v(i,3),v(i,4),v(i,5)
        end if
  30    continue
+      close(unit=3)
       return
  5000     stop '>>> Dispersion file not found <<<'
       end
 
+      subroutine get_disper(lfr)
+      include 'compar.f'
+      include 'comnla.f'
+      include 'comnp.f'
+      do 30 i=1,numl
+       if (disper(i)) then
+        ity=idltyp(i)
+        v(i,2)=cpdl(ity,lfr)
+        v(i,3)=csdl(ity,lfr)
+        v(i,4)=apdl(ity,lfr)
+        v(i,5)=asdl(ity,lfr)
+        write(6,*) i,lfr,v(i,2),v(i,3),v(i,4),v(i,5),v(i,6)
+       end if
+ 30    continue
+      return
+      end
+ 
       subroutine blprp(nb)
 c ********************************************************
 c *                       OASES                          *

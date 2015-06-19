@@ -594,7 +594,11 @@ C *** FREQUENCY LOOP
       FREQ=(JJ-1)*DLFREQ     
       DSQ=2E0*PI*FREQ+CMPLX(0E0,OMEGIM)
       RDSQ=DSQ
-      CSQ=DSQ*DSQ            
+      CSQ=DSQ*DSQ      
+
+c     Get dispersive layer parameters
+      call get_disper(jj)
+      
 C *** WAVENUMBER SAMPLING
       IF (AUSAMP) THEN
 C ***  AUTOMATIC SAMPLING
