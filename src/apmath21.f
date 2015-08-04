@@ -15,7 +15,7 @@ c *                  Henrik Schmidt                      *
 c *       Massachusetts Institute of Technology          *
 c *               Cambridge, MA 02139                    *
 c ********************************************************
-      DIMENSION DATA(N)
+      DIMENSION DATA(2*N)
       ISIGN=-IFORW
       IP0=2
       IP3=IP0*N

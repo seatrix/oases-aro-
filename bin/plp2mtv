@@ -6,10 +6,6 @@ $file=$ARGV[0];
 $cmdopt1=$ARGV[1];
 $fileplp = $file.'.plp';
 $fileplt = $file.'.plt';
-if(!-e $fileplp || !-e $fileplt ){
-    printf"plp2mtv : no such input files\n";
-    exit 1; }
-
 # printf"%s %s\n",$fileplp,$fileplt;
 open(FH1,$fileplp);	
 open(FH2,$fileplt);	
@@ -256,12 +252,13 @@ while (<FH1>)
       $toplabel = &string_trim($toplabel);
 	  
       printf FH3 "%%toplabel=\"%s\"\n",$toplabel;
+      printf FH3 "%%sidelabel=false\n";
 
       $yc0 = $yup*$ydiv;
       $dyc = 0.0375*($ydown-$yup)*$ydiv;
 
       $xc1=$xleft*$xdiv;
-      $xc2=$xc1+0.00001*($xright-$xleft)*$xdiv;
+      $xc2=$xc1+0.00001*($xleft-$xright)*$xdiv;
       $subtitle = $title;
 #      $subtitle =~ s/\W/ /g;
       $subtitle = &string_trim($subtitle);
@@ -271,7 +268,7 @@ while (<FH1>)
       printf FH3 "clip=false absolute=false ";
       printf FH3 "fn=14 ll=\"%s\"\n",$subtitle;      
 
-      $xc1=($xleft+0.90*($xright-$xleft))*$xdiv;
+      $xc1=$xright*$xdiv;
       $xc2=$xc1+0.00001*($xright-$xleft)*$xdiv;
       $options=$opt1 . $opt2;
 
@@ -305,7 +302,7 @@ while (<FH1>)
       
       for($ilab=0;$ilab<$nlab;$ilab++)
 	{ 
-	    $yc=$yc0+$dyc*($ilab+2);
+	    $yc=$yc0+$dyc*($ilab+1);
 	    printf FH3 "\@line lc=0 x1=%f y1=%f ",$xc1,$yc;
 	    printf FH3 "x2=%f y2=%f ",$xc2,$yc;
 	    printf FH3 "clip=false absolute=false ";
@@ -450,8 +447,8 @@ while (<FH1>)
 	  { $markertype=0; }
 
 	  printf FH3 "%%lt=%d lc=%d ",$linetype,$linecolor;
-#	  if ( $NC > 1 )  
-#	  { printf FH3 "linelabel=\"LINE NO.%d\" ",$inc+1; } 
+	  if ( $NC > 1 ) 
+	  { printf FH3 "linelabel=\"LINE NO.%d\" ",$inc+1; }
 	  printf FH3 "ms=2 mt=%d mc=%d\n",$markertype,$linecolor;
 	  for($ii=0;$ii<$NNN[$inc];$ii++)
 	    {

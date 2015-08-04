@@ -34,7 +34,7 @@ c
       PARAMETER (NDV=10,NLA10=(NDV+1)*NLA)
       PARAMETER (    NRD   = 2001   )
       PARAMETER (    NMOD  = 10   )
-      PARAMETER (    NPEXP = 18,
+      PARAMETER (    NPEXP = 20,
      &               NP    = 2**NPEXP,
      &               NP2   = 2*NP,
      &               ITWONP= 2*NP,
