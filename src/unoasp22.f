@@ -706,6 +706,11 @@ c >>> change velocities to micro-meter/sec in kernels
         ELSE
           CALL PLINTM(DLWVNO,WK0,SD,RDC(IR/2+1),TITLE,M,   
      1             XAXI,YAXI)
+          IF (IOUT(1).GT.0 .AND. IOUT(2).GT.0) THEN
+C Plot vertical intensity vs wavenumber
+            CALL PLVINT(DLWVNO,WK0,SD,RDC(IR/2+1),TITLE,M,   
+     1                  XAXI,YAXI)
+          END IF
         END IF
  9933  CONTINUE
       END IF

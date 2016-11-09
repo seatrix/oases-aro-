@@ -1027,6 +1027,81 @@ C
       RETURN     
 C                
       END        
+      SUBROUTINE PLVINT(DLWVNL,WK0L,SD,RD,TITLE,M,XLEN,YLEN)                 
+c ********************************************************
+c *                       OASES                          *
+c *  Ocean Acoustic and Seismic Exploration Synthetics   *
+c *                   Copyright (C)                      *
+c *                  Henrik Schmidt                      *
+c *       Massachusetts Institute of Technology          *
+c *               Cambridge, MA 02139                    *
+c ********************************************************
+c
+      INCLUDE 'compar.f'
+      INCLUDE 'comnp.f'
+      INCLUDE 'complo.f'
+      REAL YMAX               
+      CHARACTER*80 TITLE
+      CHARACTER*6 OPTION(2),OPT2
+      DATA OPT2 /'VINTTY'/
+C
+      OPTION(1)=PROGNM
+ 2400 CONTINUE
+C                
+C XAXIS DEFINITION     
+C
+      IPLOT1=MAX(1,ICUT1-100)
+      IPLOT2=MIN(NWVNO,ICUT2+100)
+      WKMIN=WK0L+(IPLOT1-1)*DLWVNL
+      NN=IPLOT2-IPLOT1+1
+      XMAX=(WK0L+(NWVNO-1)*DLWVNL)
+      XMIN=WK0L   
+      CALL AUTOAX(XMIN,XMAX,XLEFT,XRIGHT,XINC,XDIV,NXDIF)
+C
+      OPTION(1)=PROGNM
+      OPTION(2)=OPT2
+      IPLOT1=MAX(1,ICUT1-100)
+      IPLOT2=MIN(NWVNO,ICUT2+100)
+C                
+C                
+C  YAXIS DEFINITION                   
+C                   
+      call CVMUL(CFF(1,1),2,CFF(1,2),2,CFFS(1),2,NWVNO,-1)
+      CALL VNEG(CFFS(IPLOT1),2,CFFS(1),1,NN)
+      CALL VMAX(CFFS(1),1,YMAX,NWVNO)   
+      CALL VMIN(CFFS(1),1,YMIN,NWVNO)   
+      CALL AUTOAX(YMIN,YMAX,YLO,YUP,YINC,YDIV,NYDIF)
+      IF(IPLOT1.EQ.2)IPLOT1=1         
+c *** labels
+      NLAB=4
+      WRITE(LAB(1),810) FREQ
+      WRITE(LAB(2),811) SD
+      WRITE(LAB(3),812) RD
+      WRITE(LAB(4),813) M
+ 810  FORMAT('Freq:',F7.1,' Hz$')
+ 811  FORMAT('SD:',F9.1,' m$')
+ 812  FORMAT('RD:',F9.1,' m$')
+ 813  FORMAT('M:',I10)
+      PTIT='VERTICAL INTENSITY'
+      WRITE(XTXT,820) NXDIF
+ 820  FORMAT('Horizontal wavenumber (10**',I3,')$')
+      WRITE(YTXT,821) NYDIF
+ 821  FORMAT('Intensity (10**',I3,')$')
+
+      XTYP='LIN'
+      YTYP='LIN'
+      IGRID=0
+      NC=1
+C *** WRITE PLP FILE
+      CALL PLPWRI(OPTION,PTIT,TITLE,NLAB,LAB,XLEN,YLEN,
+     &                  IGRID,XLEFT,XRIGHT,XINC,XDIV,XTXT,XTYP,
+     &                  YLO,YUP,YINC,YDIV,YTXT,YTYP,NC)
+      CALL PLTWRI(NN,WKMIN,DLWVNL,0.,0.,CFFS(1),1,CFFS(1),1)
+ 2701 CONTINUE
+C                
+      RETURN     
+C                
+      END        
       SUBROUTINE MODES(IFI,NMMAX,NK,Kout,VKout)
 c ********************************************************
 c *                       OASES                          *
