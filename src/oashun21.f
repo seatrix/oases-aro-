@@ -498,10 +498,14 @@ c *       Massachusetts Institute of Technology          *
 c *               Cambridge, MA 02139                    *
 c ********************************************************
 c
-      real*4 etime
+      ! real*4 etime
       DIMENSION SECS(2)
-      COMMON /TIMECT/ OLDSECS
-      OLDSECS = ETIME(SECS)
+      INTEGER(8) COUNT, COUNT_RATE, COUNT_MAX, OLDCOUNT
+      COMMON /TIMECT/ OLDCOUNT 
+      ! CALL ETIME(SECS, OLDSECS)
+      ! CALL CPU_TIME (OLDSECS)
+      CALL SYSTEM_CLOCK (COUNT, COUNT_RATE, COUNT_MAX)
+      OLDCOUNT = COUNT
 C      OLDSECS=SECS(1)
 C      CALLSTAT=LIB$INIT_TIMER()
       RETURN
@@ -516,14 +520,19 @@ c *       Massachusetts Institute of Technology          *
 c *               Cambridge, MA 02139                    *
 c ********************************************************
 c
-      real*4 etime
+      ! real*4 etime
 c
 c Returns CPU time in secs.
 c
 C *** UNIX SYSTEMS
       DIMENSION SECS(2)
-      COMMON /TIMECT/ OLDSECS
-      T1=ETIME(SECS)-OLDSECS
+      INTEGER(8) COUNT, COUNT_RATE, COUNT_MAX, OLDCOUNT
+      COMMON /TIMECT/ OLDCOUNT 
+      REAL(4) T1
+      ! CALL ETIME(SECS, T1)
+      ! CALL CPU_TIME (T1)
+      CALL SYSTEM_CLOCK (COUNT, COUNT_RATE, COUNT_MAX)
+      T1 = dble(float(COUNT - OLDCOUNT) / float(COUNT_RATE))
 C *** VMS SYSTEMS
 CVMS  INTEGER*4 IT4
 CVMS  REAL*8 IT8

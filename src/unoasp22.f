@@ -22,7 +22,7 @@ c              form (OASK).
 
 
       COMPLEX SLOW
-      LOGICAL CFRFL,ICONTU,PLPOUT,CDROUT,GENTS,AUSAMP
+      LOGICAL CFRFL,ICONTU,PLPOUT,CDROUT,GENTS,AUSAMP,PAR
       CHARACTER*50 FILENM
       DIMENSION X(NP2,NPAR),FF(2,NP3),PX(MODULO)   
       DIMENSION CONMAX(NPAR)
@@ -123,7 +123,7 @@ C
       write(6,209) version
       WRITE(6,210)TITLE      
       CALL GETOPT(IGRP,ISTACK,IBODY,ISDEP,IPROF,ICNTIN,CFRFL,ICONTU,
-     &            PLPOUT,CDROUT,GENTS)
+     &            PLPOUT,CDROUT,GENTS,PAR)
       if (doppler) then
         read(1,*) freqs,offdbin,istyp,vsou,vrec
       else IF (ICNTIN.GT.0) THEN
@@ -244,7 +244,13 @@ C
       if ((fr2-fr1).lt.dlfreq) then
        mx=lxp1
       end if        
-      FREQM=DLFREQ*(MX-1)    
+C      FREQM=DLFREQ*(MX-1)
+C     Gaude Hope patch for paroases    
+      IF (PAR) then
+       FREQM=FREQS
+      ELSE
+       FREQM=DLFREQ*(MX-1)
+      end if
       FREQ0=DLFREQ*(LXP1-1)    
       freq1=freq0
       freq2=freqm
@@ -835,7 +841,7 @@ C
       END   
 C           
       SUBROUTINE GETOPT(IGRP,ISTACK,IBODY,ISDEP,IPROF,ICNTIN,CFRFL,
-     1                  ICONTU,PLPOUT,CDROUT,GENTS)      
+     1                  ICONTU,PLPOUT,CDROUT,GENTS,PAR)      
 c ********************************************************
 c *                       OASES                          *
 c *  Ocean Acoustic and Seismic Exploration Synthetics   *
@@ -849,7 +855,7 @@ C
 C     INPUT OF OPTIONS       
 C           
       INCLUDE 'compar.f'
-      LOGICAL CFRFL,ICONTU,PLPOUT,CDROUT,GENTS
+      LOGICAL CFRFL,ICONTU,PLPOUT,CDROUT,GENTS,PAR
       CHARACTER*1 OPT(40)
       WRITE(6,300)           
  300  FORMAT(/1H ,'OPTIONS:',/)                
@@ -873,6 +879,7 @@ C
       PLPOUT=.FALSE.
       CDROUT=.FALSE.
       GENTS=.FALSE.
+      PAR=.FALSE.
       DETERM=.FALSE.
       sctout=.false.
       double_trf=.false.
@@ -1058,6 +1065,10 @@ c       DETERM=.TRUE.
         outpot=.true.
         write(6,'(1h ,a,f6.1,a)') 
      &        'Output of patch scattering potentials'
+C >>> Gaute Hope patch for paroases
+      ELSE IF (opt(i).EQ.'|') THEN
+        PAR=.true.
+        write (6,*) 'IN PARALLEL JOB (only for internal use!)'
       ELSE
       END IF
  50   CONTINUE               
