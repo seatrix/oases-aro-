@@ -61,11 +61,15 @@ C ***  OPEN TRF-FILE AND READ HEADING
         READ(15) (IPARM(J),J=1,NOUT)
         write(6,'(1x,i3)') (IPARM(J),J=1,NOUT)
         READ(15) TITLE
-        write(6,'(1x,a,a)') 'TITLE = ', title
+        write(6,'(1x,a,a)') 'The TITLE is = ', title
         READ(15) SIGNN
+        write(6,'(1x,a,a)') 'SIGNN=',SIGNN
         READ(15) FCTRF
+        write(6,*) 'FCTRF=',FCTRF 
         READ(15) SD
+        write(6,*) 'SD=',SD
         READ(15) RD,RDLOW,IR
+        write(6,*) 'RD,RDLOW,IR=',RD,RDLOW,IR
         IF (IR.GT.0) THEN
          IF (IR.GT.NRD) THEN
           WRITE(6,*) '>>> TOO MANY RECEIVERS IN FILE <<<'
@@ -85,6 +89,7 @@ C ***  OPEN TRF-FILE AND READ HEADING
         END IF
 
         READ(15) R0,RSPACE,NPLOTS
+        write(6,*) 'R0,RSPACE,NPLOTS=', R0, RSPACE,NPLOTS
         READ(15)NX,LXTRF,MXTRF,DT
         READ(15) ICDRIN
         ICDR=ICDRIN
