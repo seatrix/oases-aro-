@@ -18,7 +18,7 @@ C     inttyp=-1 : tau-p seismograms
       INCLUDE 'comnp.f'
       INCLUDE 'comnrd.f'
       COMPLEX SLOW
-      LOGICAL CFRFL,ICONTU,TRFOUT,PLPOUT,CDROUT,GENTS,AUSAMP
+      LOGICAL CFRFL,ICONTU,TRFOUT,PLPOUT,CDROUT,GENTS,AUSAMP,PAR
       CHARACTER*50 FILENM
       DIMENSION X(NP2,NPAR),FF(2,NP3),PX(MODULO)   
       DIMENSION CONMAX(NPAR)
@@ -112,7 +112,7 @@ C
       READ(1,'(A)')TITLE       
       WRITE(6,210)TITLE      
       CALL GETOPT(IGRP,ISTACK,IBODY,ISDEP,IPROF,ICNTIN,CFRFL,ICONTU,
-     &            TRFOUT,PLPOUT,CDROUT,GENTS)
+     &            TRFOUT,PLPOUT,CDROUT,GENTS,PAR)
 c2d      if (sctout) then
 c2d       call opfilb(45,ioer)
 c2d      end if
@@ -200,15 +200,23 @@ C
       END IF
       R1=R0*1000.            
       DLFREQ=1E0/(DT*NX)     
-      MX=FR2/DLFREQ+2
-      LX=FR1/DLFREQ+1
+      MX=nint(FR2/DLFREQ)+1
+      LX=nint(FR1/DLFREQ)+1
       LX=MAX0(LX,1)
       MX=MIN0(MX,NX/2)
       LXP1=MAX(2,LX)        
       if ((fr2-fr1).lt.dlfreq) then
-       mx=lxp1
+       if (dlfreq*(mx-1)-fr1 .lt. fr1-dlfreq*(lxp1-1)) then
+        lxp1=mx
+       else
+        mx=lxp1
+       end if
       end if        
-      FREQM=DLFREQ*(MX-1)    
+      IF (PAR) then
+        FREQM=FREQS
+      ELSE
+        FREQM=DLFREQ*(MX-1)
+      END IF
       FREQ0=DLFREQ*(LXP1-1)    
       freq1=freq0
       freq2=freqm
@@ -721,12 +729,12 @@ C
       END   
 C           
       SUBROUTINE GETOPT(IGRP,ISTACK,IBODY,ISDEP,IPROF,ICNTIN,CFRFL,
-     1                  ICONTU,TRFOUT,PLPOUT,CDROUT,GENTS)      
+     1                  ICONTU,TRFOUT,PLPOUT,CDROUT,GENTS,PAR)      
 C           
 C     INPUT OF OPTIONS       
 C           
       INCLUDE 'compar.f'
-      LOGICAL CFRFL,ICONTU,TRFOUT,PLPOUT,CDROUT,GENTS
+      LOGICAL CFRFL,ICONTU,TRFOUT,PLPOUT,CDROUT,GENTS,PAR
       CHARACTER*1 OPT(40)
       logical momsou
       common /msrclo/ momsou
@@ -754,6 +762,7 @@ C
       GENTS=.FALSE.
       DETERM=.FALSE.
       sctout=.false.
+      PAR=.false.
       DO 10 I=1,NPAR            
  10   IOUT(I)=0              
       READ(1,200) OPT        
@@ -905,6 +914,9 @@ c2d       IF (SCTOUT) GO TO 50
 c2d       SCTOUT=.TRUE.
 c2d       WRITE(6,3092)
 c2d 3092  FORMAT(1H ,'OUTPUT OF SCATTERING DISCONTINUITIES')
+      ELSE IF (opt(i).EQ.'|') THEN
+        PAR=.true.
+        write (6,*) 'IN PARALLEL JOB (only for internal use!)'
       ELSE
       END IF
  50   CONTINUE               
