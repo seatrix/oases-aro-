@@ -985,7 +985,8 @@ c
       INCLUDE 'corrfn.f'
       INCLUDE 'combes.f'
       LOGICAL INTERP,NEWGFP,corsns
-      COMPLEX CARG,CINTPL,CC
+      COMPLEX CARG,CINTPL,CC,KRINT
+      COMPLEX ZETAIJ,VARTHI,VARTHJ,BESJ0,BESJ1,BESJ2
       REAL FFS(2,NP)
       EQUIVALENCE (CFFS(1),FFS(1,1))
       CHARACTER*6 CRTYP(4)
@@ -1038,13 +1039,13 @@ c      write(6,*) 'facint=',facint
 C
 C     CORRELLATION OF RADIAL COMPONENTS SET TO ZERO TEMPORARILY
 C
-       IF (((IRTYP(IRCV).EQ.2.OR.IRTYP(JRCV).EQ.3).OR.
-     &    (IRTYP(IRCV).EQ.3.OR.IRTYP(JRCV).EQ.2)).AND.
-     &    (JRCV.NE.IRCV).AND.(IRTYP(IRCV).NE.IRTYP(JRCV))) THEN
-       CORRNS(IJ)=CORRNS(IJ)+CNUL
-       CORRNS(JI)=CORRNS(JI)+CNUL
-       CC=CNUL
-      ELSE
+C       IF (((IRTYP(IRCV).EQ.2.OR.IRTYP(JRCV).EQ.3).OR.
+C     &    (IRTYP(IRCV).EQ.3.OR.IRTYP(JRCV).EQ.2)).AND.
+C     &    (JRCV.NE.IRCV).AND.(IRTYP(IRCV).NE.IRTYP(JRCV))) THEN
+C       CORRNS(IJ)=CORRNS(IJ)+CNUL
+C       CORRNS(JI)=CORRNS(JI)+CNUL
+C       CC=CNUL
+C      ELSE
        NEWGFP=(IRDCUR.NE.IDEP(IRCV)).OR.(IRPCUR.NE.IRCPAR(IRCV))
      &    .OR.(JRDCUR.NE.IDEP(JRCV)).OR.(JRPCUR.NE.IRCPAR(JRCV))
        IF (NEWGFP) THEN
@@ -1058,6 +1059,7 @@ C
 C
 C *** HORIZONTAL DIFFERENCE BETWEEN RECEIVERS
        DELTR=SQRT((RAN(IRCV)-RAN(JRCV))**2+(TRAN(IRCV)-TRAN(JRCV))**2)
+       ZETAIJ = ATAN2(TRAN(JRCV)-TRAN(IRCV),RAN(JRCV)-RAN(IRCV))
        IF (NEWGFP.OR.(.NOT.INTERP)) THEN
         IF (INTERP) THEN
           NIR=NRKMAX
@@ -1083,13 +1085,62 @@ C *** HORIZONTAL DIFFERENCE BETWEEN RECEIVERS
            ELSE
             CALL BESJ01(RK,BESJ0,BESJ1)
            END IF
-           IF (IRTYP(IRCV).NE.2.AND.IRTYP(IRCV).NE.3) THEN
-            CFFS(JR)=CBUF(JR)*BESJ0
-           ELSE IF (RK.GT.1E-10) THEN
-            CFFS(JR)=2E0*CBUF(JR)*BESJ1/RK
-           ELSE
-            CFFS(JR)=CBUF(JR)
-           END IF 
+					 IF (RK.GT.1E-10) THEN
+					 	 BESJ2=2./RK*BESJ1-BESJ0
+					 ELSE
+					   BESJ2=0.
+					 END IF
+C           IF (IRTYP(IRCV).NE.2.AND.IRTYP(IRCV).NE.3) THEN
+C            CFFS(JR)=CBUF(JR)*BESJ0
+C           ELSE IF (RK.GT.1E-10) THEN
+C            CFFS(JR)=2E0*CBUF(JR)*BESJ1/RK
+C           ELSE
+C            CFFS(JR)=CBUF(JR)
+C           END IF 
+	         VARTHI=0
+           VARTHJ=0
+           IF (IRTYP(IRCV).EQ.3) THEN
+             VARTHI=PI*0.5
+           END IF
+           IF (IRTYP(JRCV).EQ.3) THEN
+             VARTHJ=PI*0.5
+           END IF
+           IF (IRTYP(IRCV).EQ.1) THEN
+             IF (IRTYP(JRCV).EQ.1) THEN
+               KRINT=BESJ0
+             END IF
+             IF (IRTYP(JRCV).EQ.2.OR.IRTYP(JRCV).EQ.3) THEN
+               KRINT=-COS(VARTHJ-ZETAIJ)*BESJ1
+             END IF
+             IF (IRTYP(JRCV).EQ.4) THEN
+               KRINT=BESJ0
+             END IF
+           END IF
+           IF (IRTYP(IRCV).EQ.2.OR.IRTYP(IRCV).EQ.3) THEN
+             IF (IRTYP(JRCV).EQ.1) THEN
+               KRINT=-COS(VARTHI-ZETAIJ)*BESJ1
+             END IF
+             IF (IRTYP(JRCV).EQ.2.OR.IRTYP(JRCV).EQ.3) THEN
+             	  KRINT=COS(VARTHJ-VARTHI)*BESJ0
+             	  KRINT=KRINT-COS(VARTHI+VARTHJ-2.*ZETAIJ)*BESJ2
+             	 	KRINT=0.5*KRINT
+             END IF
+             IF (IRTYP(JRCV).EQ.4) THEN
+               KRINT=-COS(VARTHI-ZETAIJ)*BESJ1
+             END IF
+           END IF
+           IF (IRTYP(IRCV).EQ.4) THEN
+             IF (IRTYP(JRCV).EQ.1) THEN
+               KRINT=BESJ0
+             END IF
+             IF (IRTYP(JRCV).EQ.2.OR.IRTYP(JRCV).EQ.3) THEN
+               KRINT=-COS(VATRTHJ-ZETAIJ)*BESJ1
+             END IF
+             IF (IRTYP(JRCV).EQ.4) THEN
+               KRINT=BESJ0
+             END IF
+           END IF
+           CFFS(JR)=CBUF(JR)*KRINT
  20       CONTINUE
 C
 C
@@ -1105,7 +1156,7 @@ C
         INDXNS=JRCV+(IRCV-1)*NRCV
         CORRNS(INDXNS)=CORRNS(INDXNS)+CONJG(CC)
        END IF
-      END IF
+C      END IF
  40   CONTINUE
  50   CONTINUE
       ELSE
@@ -1128,15 +1179,16 @@ c        write(6,*) 'ff=',ff
 C
 C     CORRELLATION OF RADIAL COMPONENTS SET TO ZERO TEMPORARILY
 C
-       IF (((IRTYP(IRCV).EQ.2.OR.IRTYP(JRCV).EQ.3).OR.
-     &    (IRTYP(IRCV).EQ.3.OR.IRTYP(JRCV).EQ.2)).AND.
-     &    (JRCV.NE.IRCV).AND.(IRTYP(IRCV).NE.IRTYP(JRCV))) THEN
-        CORRNS(IJ)=CORRNS(IJ)+CNUL
-        CORRNS(JI)=CORRNS(JI)+CNUL
-       ELSE
+C       IF (((IRTYP(IRCV).EQ.2.OR.IRTYP(JRCV).EQ.3).OR.
+C     &    (IRTYP(IRCV).EQ.3.OR.IRTYP(JRCV).EQ.2)).AND.
+C     &    (JRCV.NE.IRCV).AND.(IRTYP(IRCV).NE.IRTYP(JRCV))) THEN
+C        CORRNS(IJ)=CORRNS(IJ)+CNUL
+C        CORRNS(JI)=CORRNS(JI)+CNUL
+C       ELSE
 C
 C *** HORIZONTAL DIFFERENCE BETWEEN RECEIVERS
         DELTR=SQRT((RAN(IRCV)-RAN(JRCV))**2+(TRAN(IRCV)-TRAN(JRCV))**2)
+        ZETAIJ = ATAN2(TRAN(JRCV)-TRAN(IRCV),RAN(JRCV)-RAN(IRCV))
         RK=DELTR*ARG(JR)
         IF (BESINT) THEN
           BESJ0=RINTPL(BF0,brk_0,ONODRK,NRKMAX,RK)
@@ -1144,16 +1196,64 @@ C *** HORIZONTAL DIFFERENCE BETWEEN RECEIVERS
         ELSE
           CALL BESJ01(RK,BESJ0,BESJ1)
         END IF
+				IF (RK.GT.1E-10) THEN
+					BESJ2=2./RK*BESJ1-BESJ0
+				ELSE
+					BESJ2=0.
+				END IF
         CC = CFF(IDEP(IRCV),IRCPAR(IRCV))*
      2       CONJG(CFF(IDEP(JRCV),IRCPAR(JRCV)))
-        IF (IRTYP(IRCV).NE.2.AND.IRTYP(IRCV).NE.3) THEN
-            CORRNS(IJ)=CORRNS(IJ)+FF*GG*CC*BESJ0
-        ELSE IF (RK.GT.1E-10) THEN
-            CORRNS(IJ)=CORRNS(IJ)+2E0*FF*GG*CC*BESJ1/RK
-        ELSE
-            CORRNS(IJ)=CORRNS(IJ)+FF*GG*CC
-        END IF 
-       END IF
+C        IF (IRTYP(IRCV).NE.2.AND.IRTYP(IRCV).NE.3) THEN
+C            CORRNS(IJ)=CORRNS(IJ)+FF*GG*CC*BESJ0
+C        ELSE IF (RK.GT.1E-10) THEN
+C            CORRNS(IJ)=CORRNS(IJ)+2E0*FF*GG*CC*BESJ1/RK
+C        ELSE
+C            CORRNS(IJ)=CORRNS(IJ)+FF*GG*CC
+C        END IF 
+	      VARTHI=0
+	      VARTHJ=0
+	      IF (IRTYP(IRCV).EQ.3) THEN
+	        VARTHI=PI*0.5
+	      END IF
+	      IF (IRTYP(JRCV).EQ.3) THEN
+	        VARTHJ=PI*0.5
+	      END IF
+	      IF (IRTYP(IRCV).EQ.1) THEN
+	        IF (IRTYP(JRCV).EQ.1) THEN
+	          KRINT=BESJ0
+	        END IF
+	        IF (IRTYP(JRCV).EQ.2.OR.IRTYP(JRCV).EQ.3) THEN
+	          KRINT=-COS(VARTHJ-ZETAIJ)*BESJ1
+	        END IF
+	        IF (IRTYP(JRCV).EQ.4) THEN
+	          KRINT=BESJ0
+	        END IF
+	      END IF
+	      IF (IRTYP(IRCV).EQ.2.OR.IRTYP(IRCV).EQ.3) THEN
+	      	IF (IRTYP(JRCV).EQ.1) THEN
+	          KRINT=-COS(VARTHI-ZETAIJ)*BESJ1
+	        END IF
+	        IF (IRTYP(JRCV).EQ.2.OR.IRTYP(JRCV).EQ.3) THEN
+	        	KRINT=0.5*COS(VARTHJ-VARTHI)*BESJ0
+	        	KRINT=KRINT-0.5*COS(VARTHI+VARTHJ-2.*ZETAIJ)*BESJ2
+	        END IF
+	        IF (IRTYP(JRCV).EQ.4) THEN 
+	        	KRINT=-COS(VARTHI-ZETAIJ)*BESJ1
+	        END IF
+	      END IF
+	      IF (IRTYP(IRCV).EQ.4) THEN
+	      	IF (IRTYP(JRCV).EQ.1) THEN
+	      		KRINT=BESJ0
+	      	END IF
+	        IF (IRTYP(JRCV).EQ.2.OR.IRTYP(JRCV).EQ.3) THEN
+	        	KRINT=-COS(VATRTHJ-ZETAIJ)*BESJ1
+	        END IF
+	        IF (IRTYP(JRCV).EQ.4) THEN
+	        	KRINT=BESJ0
+	        END IF
+	      END IF
+	      CORRNS(IJ)=CORRNS(IJ)+FF*GG*CC*KRINT
+C       END IF
  140   CONTINUE
  150   CONTINUE
 c       write(6,*) 'corrns=',corrns(1),corrns(2)
